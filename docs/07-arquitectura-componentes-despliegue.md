@@ -130,6 +130,7 @@ flowchart TB
     AP --> APP["App.jsx<br/>rutas + carga diferida"]
 
     APP --> HOME["Home<br/>página principal"]
+    HOME --> CHAT["ChatFlotante<br/>asistente de preguntas frecuentes"]
     APP --> LOGIN["Login"]
     APP --> REG["Register"]
     APP --> NF["NotFound"]
@@ -151,6 +152,7 @@ flowchart TB
 
     UTIL["utils<br/>format · horarios · passwordPolicy · descarga"]
     REG -.-> UTIL
+    CHAT -.-> UTIL
     AULA -.-> UTIL
     ADMIN -.-> UTIL
 ```

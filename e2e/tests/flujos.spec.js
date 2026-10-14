@@ -37,6 +37,28 @@ test.describe('Visitante', () => {
     await page.goto('/esta-ruta-no-existe');
     await expect(page.getByRole('heading', { name: 'Página no encontrada' })).toBeVisible();
   });
+
+  test('E2E-07 El asistente responde preguntas frecuentes con datos de la API y deriva a WhatsApp lo que no entiende @movil', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Abrir el asistente de preguntas frecuentes' }).click();
+    const chat = page.getByRole('dialog', { name: 'Asistente de preguntas frecuentes' });
+    await expect(chat).toBeVisible();
+
+    // Pregunta sugerida: la respuesta trae los precios en soles.
+    await chat.getByRole('button', { name: '¿Cuánto cuestan los niveles?' }).click();
+    await expect(chat.getByRole('log')).toContainText('S/');
+
+    // Pregunta escrita que no entiende: ofrece WhatsApp con la pregunta ya escrita.
+    await chat.getByLabel('Escribe tu pregunta').fill('xyzzy qwerty');
+    await chat.getByRole('button', { name: 'Enviar pregunta' }).click();
+    const whatsapp = chat.getByRole('link', { name: 'Escribir por WhatsApp' });
+    await expect(whatsapp).toBeVisible();
+    await expect(whatsapp).toHaveAttribute('href', /^https:\/\/wa\.me\/\d+\?text=.*xyzzy/);
+
+    // Escape cierra el asistente.
+    await page.keyboard.press('Escape');
+    await expect(chat).toBeHidden();
+  });
 });
 
 test.describe('Registro y aula del alumno', () => {

@@ -30,7 +30,7 @@ Los **requisitos no funcionales (RNF)** representan las características general
 |----|--------------------|---------------------|--------------------------|--------------|--------|
 | RNF-COM-01 | Interoperabilidad | La API expone contratos REST/JSON documentados que cualquier cliente puede consumir (Postman, front-end) | Tabla de endpoints del README · colección Postman | Postman · HUM-01 | Cumple |
 | RNF-COM-02 | Coexistencia | Los mismos migrations funcionan en PostgreSQL 16 (producción) y H2 (desarrollo y pruebas) | Flyway V1–V4 | POR-01 | Cumple |
-| RNF-COM-03 | Compatibilidad con navegadores y dispositivos | Se usa correctamente en Chrome de escritorio y en móvil (pantalla 412 px) | Diseño responsive con Tailwind | E2E-01…04 en proyectos `escritorio` y `movil` (Playwright) | Parcial · falta prueba manual en Firefox, Safari y Edge |
+| RNF-COM-03 | Compatibilidad con navegadores y dispositivos | Se usa correctamente en Chrome de escritorio y en móvil (pantalla 412 px) | Diseño responsive con Tailwind | E2E-01…04 y E2E-07 en proyectos `escritorio` y `movil` (Playwright) | Parcial · falta prueba manual en Firefox, Safari y Edge |
 
 ### 4. Capacidad de interacción (usabilidad)
 
@@ -107,6 +107,6 @@ Los **requisitos no funcionales (RNF)** representan las características general
 | 1 | Disponibilidad ≥ 99,9 % no alcanzable con el plan gratuito | Pasar a plan de pago o agregar un monitor externo que consulte `/api/public/health` cada 10 min; documentar la decisión | RNF-FIA-02 |
 | 2 | Sin copias de seguridad de la BD | Programar `pg_dump` periódico o usar un plan con *backups* | RNF-FIA-04 |
 | 3 | Accesibilidad sin auditar | Ejecutar Lighthouse (pestaña *Accessibility*) sobre Inicio, Login, Registro y Aula; corregir hallazgos de contraste y adjuntar la captura | RNF-INT-04 |
-| 4 | Navegadores no probados | Probar manualmente Firefox, Safari y Edge los casos E2E-01…06 y registrar el resultado | RNF-COM-03 |
+| 4 | Navegadores no probados | Probar manualmente Firefox, Safari y Edge los casos E2E-01…07 y registrar el resultado | RNF-COM-03 |
 | 5 | Límite de peticiones por instancia | Si se escala a más de una instancia, mover el contador a Redis o a la BD | RNF-FLE-02 |
 | 6 | Pruebas nuevas sin evidencia | Ejecutar `mvn verify`, `npm test` y `npx playwright test`, y pegar los resúmenes en la columna *Resultado obtenido* de 03-pruebas.md | RNF-EFI, RNF-MAN-05 |

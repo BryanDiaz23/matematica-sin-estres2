@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { api } from '../api/client';
 import { enlaceWhatsApp } from '../config';
+import ChatFlotante from '../components/ChatFlotante';
 import { rutaInicioPorRol, useAuth } from '../context/AuthContext';
 import { formatearDuracion, formatearFecha, formatearPrecio } from '../utils/format';
 
@@ -813,19 +814,8 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* BOTÓN FLOTANTE WHATSAPP */}
-      <a
-        href={generateWhatsAppLink("Botón Flotante")}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Contactar por WhatsApp"
-        className="fixed bottom-6 right-6 z-50 bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-full shadow-2xl shadow-emerald-500/50 transition-all hover:scale-110 flex items-center justify-center group"
-      >
-        <MessageCircle className="w-7 h-7 fill-current" />
-        <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 font-bold text-xs">
-          ¡Escríbenos por WhatsApp!
-        </span>
-      </a>
+      {/* ASISTENTE FLOTANTE: preguntas frecuentes (deriva a WhatsApp cuando no sabe) */}
+      <ChatFlotante niveles={niveles} horarios={horarios} />
 
     </div>
   );

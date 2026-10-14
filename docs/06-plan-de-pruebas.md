@@ -47,7 +47,7 @@ Se aplica la **pirámide de pruebas**: muchas pruebas rápidas en la base, menos
 ```mermaid
 flowchart TB
     A["Aceptación (UAT)<br/>checklist con el administrador y alumnos"]
-    B["Sistema / E2E<br/>Playwright · 6 casos × 2 dispositivos"]
+    B["Sistema / E2E<br/>Playwright · 7 casos (5 en 2 dispositivos)"]
     C["Integración<br/>MockMvc + H2 + Flyway · Postman"]
     D["Unitarias<br/>JUnit 5 · Mockito · node:test"]
     A --- B --- C --- D
@@ -64,7 +64,7 @@ flowchart TB
 
 | Tipo | Qué comprueba | Casos | Archivo / herramienta | Comando |
 |------|---------------|-------|-----------------------|---------|
-| **Unitarias** | Una pieza aislada (política de contraseñas, JWT, generador, utilidades JS) | PasswordPolicyTest (14) · UNIT-01…15 · FMT-01…13 · PWD-F01…F08 · HOR-01…09 | JUnit 5 + Mockito + AssertJ · `node:test` | `mvn test -Dgroups=unitaria` · `npm test` |
+| **Unitarias** | Una pieza aislada (política de contraseñas, JWT, generador, utilidades JS) | PasswordPolicyTest (14) · UNIT-01…15 · FMT-01…13 · PWD-F01…F08 · HOR-01…09 · CHAT-01…14 | JUnit 5 + Mockito + AssertJ · `node:test` | `mvn test -Dgroups=unitaria` · `npm test` |
 | **Integración** | Que los componentes funcionen juntos: controlador + seguridad + servicio + BD real con migraciones | SeguridadIntegrationTest (26) · MejorasIntegrationTest (6) · ProgresoYAdminIntegrationTest (6) | MockMvc + H2 + Flyway | `mvn test` |
 | **Funcionales (caja negra)** | Que el sistema cumpla lo especificado en las historias de usuario | Matriz 4.1 de [03-pruebas.md](03-pruebas.md) · Postman (42 peticiones) | MockMvc · Postman Runner | `mvn test` · Collection Runner |
 | **Humo (*smoke*)** | Que lo esencial esté vivo antes de probar a fondo | HUM-01…04 (12 ejecuciones) | `PruebasHumoIntegrationTest` | `mvn test -Dgroups=humo` |
@@ -73,7 +73,7 @@ flowchart TB
 | **Carga** | Muchas peticiones simultáneas sin errores | RND-02 (300 peticiones, 20 hilos) | ídem | ídem |
 | **Estrés** | Hasta dónde aguanta antes de fallar | RND-03 (10 → 40 → 80 hilos) | ídem | ídem |
 | **Seguridad (ataques)** | Inyección SQL, XSS, JSON malformado, tipo de contenido y verbo erróneos, cabecera de autorización manipulada | SQLI-01/02 · XSS-01…03 · JWT-01…04 · SEC-01…08 (26 ejecuciones) | `SeguridadPayloadsIntegrationTest` | `mvn test -Dgroups=seguridad` |
-| **Sistema / E2E** | Flujos completos en un navegador real | E2E-01…06 | Playwright (`e2e/`) | `cd e2e && npm test` |
+| **Sistema / E2E** | Flujos completos en un navegador real | E2E-01…07 | Playwright (`e2e/`) | `cd e2e && npm test` |
 | **Usabilidad** | Que las personas logren sus tareas con facilidad | Tareas T1…T6 y cuestionario SUS ([08 § 6](08-scrum-y-prototipos.md)) | Sesiones con usuarios | manual |
 | **Compatibilidad** | Navegadores y dispositivos | E2E en Chrome escritorio y Pixel 7; manual en Firefox/Safari/Edge | Playwright + manual | `npx playwright test` |
 | **Aceptación (UAT)** | Que el cliente confirme que el sistema sirve a su necesidad | Criterios de 7.11 | Checklist con el administrador | manual |
@@ -125,7 +125,7 @@ flowchart TB
 | `WebDriverWait` + `ExpectedConditions` | `await expect(locator).toBeVisible()` (espera integrada) |
 | `assertEquals(url, driver.getCurrentUrl())` | `await expect(page).toHaveURL(...)` |
 
-Los casos E2E-01…06 se pueden reescribir en Selenium sin cambiar su lógica si la cátedra lo exige.
+Los casos E2E-01…07 se pueden reescribir en Selenium sin cambiar su lógica si la cátedra lo exige.
 
 **Estándares de referencia:** ISO/IEC 25010 (calidad del producto) para los requisitos no funcionales y el glosario/terminología del **ISTQB** (International Software Testing Qualifications Board) para nombrar niveles, tipos y técnicas de prueba.
 
@@ -230,7 +230,7 @@ Ciclo **Rojo → Verde → Refactorizar**: se escribe la prueba y se ve **fallar
 
 | Requisito / historia | RNF relacionados | Casos de prueba |
 |----------------------|------------------|-----------------|
-| HU-01…03 Ver catálogo, horarios, solicitar clase de diagnóstico | RNF-ADF-01, RNF-EFI-01 | BD-02 · SOL-01 · HUM-01 · RND-01 · E2E-01 |
+| HU-01…03 Ver catálogo, horarios, solicitar clase de diagnóstico | RNF-ADF-01, RNF-EFI-01 | BD-02 · SOL-01 · HUM-01 · RND-01 · E2E-01 · CHAT-01…14 · E2E-07 |
 | HU-04 Registrarse | RNF-SEG-04, RNF-INT-02 | CRED-01…04 · PWD-F01…F08 · E2E-05 · E2E-06 |
 | HU-05 Iniciar sesión / salir | RNF-SEG-02, RNF-SEG-04 | AUT-01…05 · JWT-01…04 · UNIT-07…15 · SEC-01 · SEC-08 · E2E-02 · E2E-06 |
 | HU-06 Solicitar matrícula | RNF-ADF-01 | MAT-01 |
@@ -251,15 +251,15 @@ Ciclo **Rojo → Verde → Refactorizar**: se escribe la prueba y se ve **fallar
 
 ## 7.15 Reporte de resultados (completar con la ejecución real)
 
-Estado actual de la ejecución: **las pruebas nuevas se escribieron sin poder ejecutarlas** (el entorno de redacción no tenía acceso a los repositorios de dependencias). Excepto las 40 pruebas unitarias del front-end, que sí se ejecutaron y pasaron (40/40, incluso en las zonas horarias de Lima, UTC y Tokio), todo lo demás debe ejecutarse y registrarse aquí.
+Estado actual de la ejecución: **las pruebas nuevas se escribieron sin poder ejecutarlas** (el entorno de redacción no tenía acceso a los repositorios de dependencias). Excepto las 54 pruebas unitarias del front-end, que sí se ejecutaron y pasaron (54/54, incluso en las zonas horarias de Lima, UTC y Tokio), todo lo demás debe ejecutarse y registrarse aquí.
 
 | # | Comando | Qué se obtiene | Resultado | Fecha | Evidencia |
 |---|---------|----------------|-----------|-------|-----------|
 | 1 | `cd backend && mvn -B test -Dgroups=humo` | 12 ejecuciones de humo | _[completar]_ | | |
 | 2 | `cd backend && mvn -B verify` | Suite completa (113 ejecuciones previstas: 56 existentes + 57 nuevas) y cobertura en `target/site/jacoco/index.html` | _[completar]_ | | |
 | 3 | `cd backend && mvn test -Dgroups=rendimiento` | Líneas `[RND-0x] … p95=… ms` | _[completar]_ | | |
-| 4 | `cd frontend && npm test` | 40 pruebas unitarias | **40/40 aprobadas** | 14/10/2026 (entorno de redacción) | Salida de `node --test`; repetir en tu equipo |
-| 5 | `cd e2e && npm install && npx playwright install chromium && npx playwright test` | 10 ejecuciones E2E (6 escritorio + 4 móvil) | _[completar]_ | | `e2e/playwright-report` |
+| 4 | `cd frontend && npm test` | 54 pruebas unitarias | **54/54 aprobadas** | 14/10/2026 (entorno de redacción) | Salida de `node --test`; repetir en tu equipo |
+| 5 | `cd e2e && npm install && npx playwright install chromium && npx playwright test` | 12 ejecuciones E2E (7 escritorio + 5 móvil) | _[completar]_ | | `e2e/playwright-report` |
 | 6 | Postman → *Collection Runner* | 42 peticiones con aserciones | _[completar]_ | | Captura del Runner |
 | 7 | Lighthouse (Chrome DevTools) | Accesibilidad, rendimiento, buenas prácticas | _[completar]_ | | Captura |
 | 8 | Pruebas de usabilidad (08 § 6) | Puntaje SUS y tareas completadas | _[completar]_ | | Hoja de resultados |

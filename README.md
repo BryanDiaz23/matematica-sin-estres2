@@ -23,7 +23,7 @@ flowchart LR
 | Back-end | Java 17, Spring Boot 3.3, Spring Web, Spring Security 6, Bean Validation |
 | Persistencia | Spring Data JPA (Hibernate 6), Flyway, PostgreSQL 16 (prod) / H2 (dev y pruebas) |
 | Seguridad | JWT HS256+ (jjwt 0.12), BCrypt costo 12, CORS restringido, CSP y cabeceras seguras |
-| Pruebas | JUnit 5, Mockito, MockMvc, AssertJ (113 ejecuciones previstas en el back-end), `node:test` (40 en el front-end), Playwright (E2E), JaCoCo (cobertura), Postman (42 peticiones con aserciones de status y SLA < 500 ms) |
+| Pruebas | JUnit 5, Mockito, MockMvc, AssertJ (113 ejecuciones previstas en el back-end), `node:test` (54 en el front-end), Playwright (E2E), JaCoCo (cobertura), Postman (42 peticiones con aserciones de status y SLA < 500 ms) |
 | Despliegue | Docker multi-etapa, Render Blueprint (`render.yaml`), GitHub Actions (CI) |
 
 ## Estructura del repositorio
@@ -92,6 +92,7 @@ flowchart LR
 - **Pruebas nuevas:** humo, rendimiento (carga y estrés), seguridad con payloads de inyección SQL y XSS, JWT, generador de contraseñas, front-end (`node:test`) y de sistema en navegador (Playwright, escritorio y móvil).
 - **Integración continua:** GitHub Actions ejecuta primero las pruebas de humo, luego la suite completa con informe de cobertura JaCoCo, el front-end y las pruebas E2E. Dependabot vigila las dependencias.
 - **Defecto corregido (DEF-001):** un `Content-Type` no soportado devolvía 500; ahora responde **415** (y **406** si el cliente pide otro formato).
+- **Asistente de preguntas frecuentes:** el botón flotante de WhatsApp se reemplazó por un chat que responde al instante (precios y horarios salen de la base de datos) y deriva a WhatsApp lo que no entiende. Las respuestas se editan en `frontend/src/utils/chatbot.js`.
 - **Seguridad y operación:** cabecera `Permissions-Policy`, apagado ordenado (*graceful shutdown*) y compresión de respuestas JSON.
 - **Front-end:** carga diferida de pantallas (`React.lazy`), pantalla de error global (`ErrorBoundary`), respeto de `prefers-reduced-motion`, favicon, metadatos Open Graph y `robots.txt`.
 

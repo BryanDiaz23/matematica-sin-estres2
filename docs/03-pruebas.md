@@ -3,8 +3,8 @@
 Las pruebas se ejecutan de dos formas complementarias:
 
 1. **Automatizadas del back-end** con JUnit 5 + MockMvc sobre la aplicación completa (seguridad, BD H2 y migraciones Flyway reales): `cd backend && mvn test`. Archivos originales: `SeguridadIntegrationTest.java` (26 casos), `MejorasIntegrationTest.java` (6), `ProgresoYAdminIntegrationTest.java` (6), `RateLimitIntegrationTest.java` (1), `PasswordPolicyTest.java` (14) y la prueba unitaria con Mockito `AdminServiceMockitoTest.java` (3, sin BD): **56** ejecuciones. En la versión 1.3 se añadieron 57 ejecuciones más (humo, rendimiento, payloads de seguridad, JWT y generador de contraseñas): total previsto **113**. Se pueden correr por grupo con `mvn test -Dgroups=humo|unitaria|rendimiento|seguridad`.
-   - **Front-end**: pruebas unitarias con `node:test` (`cd frontend && npm test`, 40 casos).
-   - **Navegador (E2E)**: Playwright en la carpeta `e2e/` (6 casos, 10 ejecuciones entre escritorio y móvil).
+   - **Front-end**: pruebas unitarias con `node:test` (`cd frontend && npm test`, 54 casos).
+   - **Navegador (E2E)**: Playwright en la carpeta `e2e/` (7 casos, 12 ejecuciones entre escritorio y móvil).
 2. **Manuales/de API** con Postman: `postman/MatematicaSinEstres-APF2.postman_collection.json` (42 peticiones con aserciones). Se ejecuta con el *Collection Runner* contra el entorno local o el de producción.
 
 > Columna **Resultado obtenido**: completar con la ejecución real (captura de `mvn test` y del Runner de Postman) para adjuntarla como evidencia.
@@ -78,7 +78,7 @@ Las pruebas se ejecutan de dos formas complementarias:
 
 ## 4.4 Cómo obtener las evidencias
 
-1. `cd backend && mvn test` → captura del resumen `Tests run: 113, Failures: 0` (56 originales + 57 de la versión 1.3). Además: `cd frontend && npm test` (40 aprobados) y `cd e2e && npx playwright test`.
+1. `cd backend && mvn test` → captura del resumen `Tests run: 113, Failures: 0` (56 originales + 57 de la versión 1.3). Además: `cd frontend && npm test` (54 aprobados) y `cd e2e && npx playwright test`.
 2. Postman → *Import* la colección y el entorno → en el entorno completar `adminPassword` y `alumnoPassword` → *Run collection* → captura del resumen del Runner.
 3. Capturas individuales sugeridas: login 200 con token, alumno en `/api/admin/usuarios` 403, token alterado 401, clase de otro nivel 403, inyección SQL 401, `<script>` 400.
 
@@ -109,11 +109,13 @@ Estos casos se diseñaron para el [plan de pruebas](06-plan-de-pruebas.md). La c
 | FMT-01…13 | Unitaria (front) | Formateo de fechas, textos y números | Salida esperada | `frontend/tests/format.test.js` | 13/13 aprobados |
 | PWD-F01…F08 | Unitaria (front) | Política de contraseñas en el navegador (8 casos; uno recorre 11 contraseñas débiles) | Igual que el back-end | `frontend/tests/passwordPolicy.test.js` | 18/18 aprobados |
 | HOR-01…09 | Unitaria (front) | Horarios y recordatorio `.ics` | Archivo y fechas correctos | `frontend/tests/horarios.test.js` | 9/9 aprobados |
+| CHAT-01…14 | Unitaria (front) | Asistente de preguntas frecuentes: entiende las 6 preguntas sugeridas, usa precios y horarios de la API, ignora tildes, no confunde "pre" con "precio", deriva a WhatsApp lo que no entiende, no repite HTML | Ver el archivo | `frontend/tests/chatbot.test.js` | 14/14 aprobados |
 | E2E-01 | Sistema | La página principal carga niveles desde la API | Niveles visibles | `e2e/tests/flujos.spec.js` | |
 | E2E-02 | Sistema | Login inválido | Mensaje de error | `e2e/tests/flujos.spec.js` | |
 | E2E-03 | Sistema | Rutas privadas sin sesión | Redirige a `/login` | `e2e/tests/flujos.spec.js` | |
 | E2E-04 | Sistema | Ruta inexistente | Página 404 | `e2e/tests/flujos.spec.js` | |
 | E2E-05 | Sistema | Contraseña débil en el registro | "Crear cuenta" deshabilitado | `e2e/tests/flujos.spec.js` | |
 | E2E-06 | Sistema | Registro → login → Aula → `/admin` redirige → salir | Flujo completo | `e2e/tests/flujos.spec.js` | |
+| E2E-07 | Sistema | El asistente responde con precios de la API, deriva a WhatsApp una pregunta desconocida y se cierra con Esc | Respuesta con `S/`, enlace `wa.me` con la pregunta, diálogo cerrado | `e2e/tests/flujos.spec.js` | |
 
 > **Nota sobre identificadores repetidos.** `MAT-01` y `MAT-02` aparecen en la matriz 4.1 (solicitud y activación de matrícula, manuales) y también como nombre de dos pruebas de `ProgresoYAdminIntegrationTest` (matrícula manual por el admin y 403 al alumno). Son casos distintos; para citarlos en el informe conviene escribir "MAT-01 (matriz 4.1)" o "MAT-01 (JUnit)".
