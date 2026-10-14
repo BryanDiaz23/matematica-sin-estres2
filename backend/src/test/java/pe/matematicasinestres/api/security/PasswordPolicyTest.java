@@ -1,5 +1,6 @@
 package pe.matematicasinestres.api.security;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -9,6 +10,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** Pruebas unitarias de la política de contraseñas robustas. */
+@Tag("unitaria")
 class PasswordPolicyTest {
 
     private final PasswordPolicy politica = new PasswordPolicy();

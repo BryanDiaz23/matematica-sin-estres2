@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -57,6 +59,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiError> metodoNoPermitido(HttpRequestMethodNotSupportedException ex, HttpServletRequest req) {
         return respuesta(HttpStatus.METHOD_NOT_ALLOWED, "Método HTTP no permitido para este recurso.", req, null);
+    }
+
+    /** Cuerpo con un Content-Type que la API no acepta (por ejemplo text/plain en un endpoint JSON). */
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ApiError> tipoDeContenidoNoSoportado(HttpMediaTypeNotSupportedException ex, HttpServletRequest req) {
+        return respuesta(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Tipo de contenido no soportado. Envía los datos como application/json.", req, null);
+    }
+
+    /** El cliente pide (cabecera Accept) un formato que la API no produce. */
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public ResponseEntity<ApiError> formatoNoAceptable(HttpMediaTypeNotAcceptableException ex, HttpServletRequest req) {
+        return respuesta(HttpStatus.NOT_ACCEPTABLE, "La API solo responde en formato application/json.", req, null);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

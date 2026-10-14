@@ -1,5 +1,6 @@
 package pe.matematicasinestres.api.service;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /** Pruebas unitarias con Mockito (sin base de datos): lógica de restablecimiento de contraseña. */
+@Tag("unitaria")
 @ExtendWith(MockitoExtension.class)
 class AdminServiceMockitoTest {
 

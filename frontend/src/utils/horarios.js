@@ -1,4 +1,4 @@
-import { normalizar } from './format';
+import { normalizar } from './format.js';
 
 const PREFIJOS = ['dom', 'lun', 'mar', 'mie', 'jue', 'vie', 'sab'];
 const NOMBRES = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];

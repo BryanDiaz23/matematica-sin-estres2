@@ -23,7 +23,7 @@ flowchart LR
 | Back-end | Java 17, Spring Boot 3.3, Spring Web, Spring Security 6, Bean Validation |
 | Persistencia | Spring Data JPA (Hibernate 6), Flyway, PostgreSQL 16 (prod) / H2 (dev y pruebas) |
 | Seguridad | JWT HS256+ (jjwt 0.12), BCrypt costo 12, CORS restringido, CSP y cabeceras seguras |
-| Pruebas | JUnit 5, Mockito, MockMvc, AssertJ (50 pruebas), Postman (42 peticiones con aserciones de status y SLA < 500 ms) |
+| Pruebas | JUnit 5, Mockito, MockMvc, AssertJ (113 ejecuciones previstas en el back-end), `node:test` (40 en el front-end), Playwright (E2E), JaCoCo (cobertura), Postman (42 peticiones con aserciones de status y SLA < 500 ms) |
 | Despliegue | Docker multi-etapa, Render Blueprint (`render.yaml`), GitHub Actions (CI) |
 
 ## Estructura del repositorio
@@ -40,10 +40,11 @@ flowchart LR
 │   │   ├── dto/              Objetos de entrada/salida con Bean Validation
 │   │   ├── validation/       @SinHtml (anti-XSS)
 │   │   └── exception/        Manejo global de errores (sin fuga de stacktrace)
-│   ├── src/main/resources/db/migration/   V1 esquema · V2 datos iniciales · V3 mejoras de seguridad
+│   ├── src/main/resources/db/migration/   V1 esquema · V2 datos iniciales · V3 mejoras de seguridad · V4 progreso de clases
 │   ├── src/test/             Pruebas unitarias y de integración
 │   └── Dockerfile
 ├── frontend/                 SPA React (Home, Login, Registro, Aula Virtual, Panel Admin)
+├── e2e/                      Pruebas de sistema en navegador (Playwright)
 ├── postman/                  Colección y entornos de Postman
 ├── docs/                     Documentación técnica del APF2
 ├── docker-compose.yml        Entorno local con PostgreSQL
@@ -85,6 +86,15 @@ flowchart LR
 - Solicitudes con botón de WhatsApp con mensaje prellenado; Auditoría con filtros por evento y rango.
 - Nuevos endpoints del alumno: `POST /api/alumno/clases/{id}/abrir` y `PUT /api/alumno/clases/{id}/progreso`; migración Flyway **V4** (`progreso_clases`).
 
+### Mejoras de la versión 1.3 (calidad y pruebas)
+
+- **Plan de pruebas y requisitos de calidad:** 34 requisitos no funcionales según ISO/IEC 25010, plan de pruebas con niveles, tipos, criterios y trazabilidad, diagramas de componentes y despliegue, y guía de Scrum y usabilidad (ver la tabla de documentación).
+- **Pruebas nuevas:** humo, rendimiento (carga y estrés), seguridad con payloads de inyección SQL y XSS, JWT, generador de contraseñas, front-end (`node:test`) y de sistema en navegador (Playwright, escritorio y móvil).
+- **Integración continua:** GitHub Actions ejecuta primero las pruebas de humo, luego la suite completa con informe de cobertura JaCoCo, el front-end y las pruebas E2E. Dependabot vigila las dependencias.
+- **Defecto corregido (DEF-001):** un `Content-Type` no soportado devolvía 500; ahora responde **415** (y **406** si el cliente pide otro formato).
+- **Seguridad y operación:** cabecera `Permissions-Policy`, apagado ordenado (*graceful shutdown*) y compresión de respuestas JSON.
+- **Front-end:** carga diferida de pantallas (`React.lazy`), pantalla de error global (`ErrorBoundary`), respeto de `prefers-reduced-motion`, favicon, metadatos Open Graph y `robots.txt`.
+
 ### Cuentas iniciales (seed)
 
 | Usuario | Rol | Uso |
@@ -120,7 +130,18 @@ npm run dev                    # http://localhost:5173
 
 # 3) Pruebas automatizadas del back-end
 cd backend
-mvn test
+mvn test                          # todas
+mvn test -Dgroups=humo            # también: unitaria · rendimiento · seguridad
+mvn verify                        # pruebas + informe de cobertura en target/site/jacoco
+
+# 4) Pruebas unitarias del front-end
+cd frontend
+npm test
+
+# 5) Pruebas de sistema en navegador (Playwright; levanta la API y el front-end solo)
+cd e2e
+npm install && npx playwright install chromium
+npx playwright test               # informe: npx playwright show-report
 ```
 
 **Con PostgreSQL en Docker** (mismo motor que producción):
@@ -155,6 +176,10 @@ JWT_SECRET=$(openssl rand -base64 32) docker compose up --build
 | 3. Controles de seguridad | [docs/02-seguridad.md](docs/02-seguridad.md) |
 | 4. Validación del servicio | [docs/03-pruebas.md](docs/03-pruebas.md) · [postman/](postman) |
 | 5. Despliegue a producción | [docs/04-despliegue.md](docs/04-despliegue.md) |
+| 6. Requisitos no funcionales (ISO/IEC 25010) | [docs/05-requisitos-no-funcionales.md](docs/05-requisitos-no-funcionales.md) |
+| 7. Plan de pruebas de software | [docs/06-plan-de-pruebas.md](docs/06-plan-de-pruebas.md) |
+| 8. Diagramas de componentes y de despliegue | [docs/07-arquitectura-componentes-despliegue.md](docs/07-arquitectura-componentes-despliegue.md) |
+| 9. Scrum, prototipo y usabilidad | [docs/08-scrum-y-prototipos.md](docs/08-scrum-y-prototipos.md) |
 
 ## Enlaces del proyecto
 

@@ -3,6 +3,10 @@ node_modules/
 dist/
 target/
 
+# Resultados de las pruebas E2E (Playwright)
+playwright-report/
+test-results/
+
 # Variables de entorno y secretos (nunca subir al repositorio)
 .env
 .env.*

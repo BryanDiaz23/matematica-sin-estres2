@@ -17,9 +17,16 @@ spring:
   jackson:
     time-zone: America/Lima
     default-property-inclusion: non_null
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
 
 server:
   port: ${PORT:8080}
+  shutdown: graceful            # termina las peticiones en curso antes de apagar (despliegues sin errores)
+  compression:                  # respuestas JSON más livianas (eficiencia de desempeño, ISO 25010)
+    enabled: true
+    mime-types: application/json
+    min-response-size: 1024
   error:
     include-stacktrace: never
     include-message: never
